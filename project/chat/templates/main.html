@@ -15,18 +15,20 @@
 </head>
 <body>
 <div class="container">
-<h1>My messages</h1>
+<h1>My messages:  {{owner.username}}</h1>
 
+
+{%for message in my_messages %}
 <div class="card mt-4">
   <div class="card-header">
-    <p class="font-monospace text-muted">Username 07.08.1995 15:53</p>
+    <p class="font-monospace text-muted"> {{message.author }}   {{message.created_at }}</p>
   </div>
   <div class="card-body">
-      <h5 class="card-title fst-italic">last Some message</h5>
+      <h5 class="card-title fst-italic">{{message.body }}</h5>
     <a href="#" class="btn btn-primary">Open chat</a>
-
   </div>
 </div>
+{%endfor%}
 
 </div>
 
