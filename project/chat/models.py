@@ -15,4 +15,4 @@ class Message(models.Model):
         return f"{self.author.username} send message to {self.recipient.username}"
 
     class Meta:
-        ordering = ('-created_at')
+        ordering = ('-created_at',)
