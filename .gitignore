@@ -87,6 +87,6 @@ local_settings.py
 db.sqlite3
 .venv
 venv
-
+.idea
 project/media
 project/static
