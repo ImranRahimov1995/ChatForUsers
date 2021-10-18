@@ -44,6 +44,7 @@
   .card{
     margin-top: 10px;
     height: 70px;
+
   }
   .extra-align{
     text-align: right;
@@ -89,6 +90,48 @@
             sc.scrollTop=sc.scrollHeight;
 
         });
+
+
+        const messagesSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/chat/'
+            + "{{room.pk}}"
+            + '/'
+        );
+
+
+
+        messagesSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data)
+            messageslist = document.getElementById('box')
+            messageslist.insertAdjacentHTML(
+                'beforeend',
+                '<div class="card'+'{%if message.author == request.user%}'+'extra-align'+'{%endif%}'+'">\n'+
+                '<div class="card-header">\n'+
+                '<p class="font-monospace text-muted">'+ data['message']['author'] + data['message']['created_at'] +'</p>\n'+
+                '</div>\n'+
+                '<div class="card-body">\n'+
+                '<h5 class="card-title fst-italic">'+data['message']['body']+'</h5>\n'+
+                '</div>\n'+
+                '</div>'
+            );
+
+            let sc = document.getElementById('box');
+            sc.scrollTop=sc.scrollHeight;
+        };
+
+
+        document.querySelector('.btn').onclick = function (e) {
+            e.preventDefault()
+            const message = document.querySelector(".textarea");
+            const text = message.value;
+            messagesSocket.send(JSON.stringify({
+                    'text':text
+            }));
+            message.value = ''
+        };
+
     </script>
 
 </body>

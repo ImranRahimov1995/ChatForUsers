@@ -7,4 +7,4 @@ class UserLogin(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 class SendMessage(forms.Form):
-    body = forms.CharField(widget=forms.Textarea)
+    body = forms.CharField(widget=forms.Textarea,label='Enter your message')

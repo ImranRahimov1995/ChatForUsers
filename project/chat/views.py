@@ -74,7 +74,7 @@ def chat_detail(request,pk):
 
 
     context = {
-
+        'room':room,
         'my_messages': room_messages,
         'form':form,
     }
