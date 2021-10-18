@@ -25,7 +25,7 @@
   </div>
   <div class="card-body">
       <h5 class="card-title fst-italic">{{message.body }}</h5>
-    <a href="#" class="btn btn-primary">Open chat</a>
+    <a href="{% url 'chat_detail' pk=message.room.pk %}" class="btn btn-primary">Open chat</a>
   </div>
 </div>
 {%endfor%}

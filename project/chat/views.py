@@ -1,11 +1,13 @@
 from django.shortcuts import render,redirect
-from .forms import UserLogin
+from .forms import UserLogin,SendMessage
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
-from .models import Message
+from .models import Message, Room
 # Create your views here.
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+
+
 
 def login_page(request):
     if request.method == "POST":
@@ -34,10 +36,49 @@ def login_page(request):
 
 
 def my_chats(request):
-    pass
+    current_user = User.objects.get(username=request.user)
+
+    my_rooms = Room.objects.filter(members__in=[request.user])
+
+    last_messages_from_rooms = [room.all_messages.first() for room in my_rooms]
+    print(last_messages_from_rooms)
+    context = {
+        'owner': current_user,
+        'my_messages': last_messages_from_rooms,
+    }
+    return render(request,'main.html',context)
+
+
+def chat_detail(request,pk):
+    room = Room.objects.get(pk=pk)
+    room_messages = room.all_messages.all()
+    author = User.objects.get(username=request.user)
+    recipient = author.message_delivered.filter(room=room)[0].author
+    print(1,author)
+    print(2,recipient)
+
+
+    if request.method == "POST":
+        form = SendMessage(request.POST,)
+        if form.is_valid():
+            message = Message.objects.create(author=author,recipient=recipient,room=room,body=form.cleaned_data['body'])
+    else:
+        form =SendMessage()
 
 
 
+
+
+
+
+
+
+    context = {
+
+        'my_messages': room_messages,
+        'form':form,
+    }
+    return render(request,'room.html',context)
 
 
 

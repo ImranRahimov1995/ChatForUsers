@@ -1,19 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.urls import reverse
 
 
 class Room(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
-    client1 = models.ForeignKey(User,on_delete=models.CASCADE,related_name='client1')
-    client2 = models.ForeignKey(User,on_delete=models.CASCADE,related_name='client2')
-
-    class Meta:
-        unique_together = [['client1', 'client2']]
+    members = models.ManyToManyField(User,related_name='members')
 
     def __str__(self):
         return str(self.pk)
+
+    def get_absolute_url(self):
+        return reverse('chat_detail',kwargs={'pk':self.pk,})
 
 class Message(models.Model):
 
@@ -26,7 +25,7 @@ class Message(models.Model):
 
 
     def __str__(self):
-        return f"{self.author.username} send message to {self.recipient.username}"
+        return f"{self.author.username} send message to {self.recipient.username} text {self.body}"
 
     class Meta:
         ordering = ('-created_at',)
