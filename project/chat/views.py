@@ -51,7 +51,7 @@ def my_chats(request):
 
 def chat_detail(request,pk):
     room = Room.objects.get(pk=pk)
-    room_messages = room.all_messages.all()
+    room_messages = room.all_messages.all().order_by('created_at')
     author = User.objects.get(username=request.user)
     recipient = author.message_delivered.filter(room=room)[0].author
     print(1,author)

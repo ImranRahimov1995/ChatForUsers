@@ -45,15 +45,18 @@
     margin-top: 10px;
     height: 70px;
   }
+  .extra-align{
+    text-align: right;
+  }
 
 </style>
 
 
 <div class="container">
     <h1 class="mt-4 mb-4 welcome">Welcome to Chat {{request.user}}</h1>
-    <div class="container-sm chat">
+    <div id="box" class="container-sm chat">
         {% for message in my_messages %}
-        <div class="card">
+        <div class="card {%if message.author == request.user%}extra-align{%endif%}">
             <div class="card-header">
                 <p class="font-monospace text-muted">{{message.author}} {{message.created_at|timesince}} ago</p>
             </div>
@@ -79,15 +82,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
         crossorigin="anonymous"></script>
     <script>
-        $( "#btn" ).click(function() {
-            setTimeout(function(){
-                $('.textarea').val("");
-            }, 2);
-           });
+
         $(document).ready ( function(){
             $('.textarea').val("");
-        });
+            let sc = document.getElementById('box');
+            sc.scrollTop=sc.scrollHeight;
 
+        });
     </script>
 
 </body>
