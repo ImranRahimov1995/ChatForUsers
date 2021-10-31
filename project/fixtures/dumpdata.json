@@ -1,0 +1,1 @@
+[{"model": "chat.room", "pk": 1, "fields": {"created_at": "2021-10-31T17:45:10.071Z", "members": [3, 4]}}, {"model": "chat.message", "pk": 1, "fields": {"author": 3, "recipient": 4, "room": 1, "created_at": "2021-10-31T17:45:31.589Z", "body": "Hello my friend! =)"}}]

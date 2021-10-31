@@ -10,6 +10,8 @@ from chat.models import Room, Message
 class ChatsConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
+        """Create websocket connection """
+
         self.chat_id = self.scope['url_route']['kwargs']['pk']
         self.chat_group_name = 'chat_%s' % self.chat_id
 
@@ -18,8 +20,6 @@ class ChatsConsumer(AsyncWebsocketConsumer):
             self.chat_group_name,
             self.channel_name
         )
-        print(self.chat_id)
-        print(self.chat_group_name)
 
         await self.accept()
 
@@ -31,12 +31,12 @@ class ChatsConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        """ Receive messages from client"""
         text_data_json = json.loads(text_data)
         message = text_data_json['text']
 
-        print(message)
-
         new_message = await self.create_new_message(message)
+
         data = {
             'author': new_message.author.username,
             'created_at': new_message.created_at.strftime('%Y-%m-%d %H:%m'),
@@ -44,18 +44,17 @@ class ChatsConsumer(AsyncWebsocketConsumer):
         }
 
 
-
+        """ send received messages to all connected users"""
         await self.channel_layer.group_send(
-            self.chat_group_name,
-            {
-                'type': 'new_message',
-                'message': data
-            }
-        )
+                                    self.chat_group_name,
+                                    {
+                                        'type': 'new_message',
+                                        'message': data
+                                    }
+                                )
 
     async def new_message(self, event):
         message = event['message']
-        print(message)
         await self.send(
             text_data=json.dumps({
                 'message': message,
@@ -64,10 +63,14 @@ class ChatsConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_new_message(self, text):
+        """Create message model object"""
+
         room = Room.objects.get(pk=self.chat_id)
         author = self.scope['user']
         recipient = author.message_delivered.filter(room=room)[0].author
 
-        new_message = Message.objects.create(author=author, recipient=recipient, room=room, body=text)
+        new_message = Message.objects.create(author=author,
+                                             recipient=recipient, 
+                                             room=room, body=text)
 
         return new_message
