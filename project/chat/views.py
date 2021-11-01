@@ -41,7 +41,10 @@ def login_page(request):
 
 
 def my_chats(request):
-    current_user = User.objects.get(username=request.user)
+    try:
+        current_user = User.objects.get(username=request.user)
+    except User.DoesNotExist:
+        return redirect('login')
     my_rooms = Room.objects.filter(members__in=[request.user])
     last_messages_from_rooms = [room.all_messages.first()
                                      for room in my_rooms]

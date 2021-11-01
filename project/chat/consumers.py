@@ -67,7 +67,7 @@ class ChatsConsumer(AsyncWebsocketConsumer):
 
         room = Room.objects.get(pk=self.chat_id)
         author = self.scope['user']
-        recipient = author.message_delivered.filter(room=room)[0].author
+        recipient = room.members.exclude(pk=author.pk)[0]
 
         new_message = Message.objects.create(author=author,
                                              recipient=recipient, 
