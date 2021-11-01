@@ -23,14 +23,19 @@
    }
    .mes-send{
     width: 1000px;
-    margin-left: 11%;
+    /* margin-left: 11%; */
+    margin:auto;
+    box-shadow: 5px 10px #bbaeae;
 
   }
   .chat{
-    border:1px solid #000000;
+    border:2px solid #050505;
+    border-radius: 2%;
+    box-shadow: 5px 10px #bbaeae;
     height: 500px;
     width: 1000px;
     overflow: scroll;
+    padding: auto;
   }
   .welcome{
     margin-left: 11%;
@@ -44,6 +49,7 @@
   .card{
     margin-top: 10px;
     height: 70px;
+    box-shadow: 5px 5px #bbaeae;
 
   }
   .extra-align{
@@ -54,10 +60,10 @@
 
 
 <div class="container">
-    <h1 class="mt-4 mb-4 welcome">Welcome to Chat {{request.user}}</h1>
+    <h1 class="mt-4 mb-4 welcome">Welcome to chat with {{recipient}}</h1>
     <div id="box" class="container-sm chat">
         {% for message in my_messages %}
-        <div class="card {%if message.author == request.user%}extra-align{%endif%}">
+        <div id='align' class="card {%if message.author == request.user%}extra-align{%endif%}" data-id={%if message.author == request.user%}{{message.author}}{%endif%}>
             <div class="card-header">
                 <p class="font-monospace text-muted">{{message.author}} {{message.created_at|timesince}} ago</p>
             </div>
@@ -67,6 +73,8 @@
         </div>
         {% endfor %}
     </div>
+    <br>
+    <br>
     <form action="." class="mes-send" method="post">
         {{form|crispy}}
         {% csrf_token %}
@@ -82,6 +90,7 @@
         crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
         crossorigin="anonymous"></script>
+{%block javascript%}   
     <script>
 
         $(document).ready ( function(){
@@ -101,13 +110,19 @@
         );
 
 
-
         messagesSocket.onmessage = function(e) {
             const data = JSON.parse(e.data)
+
+            let recipient ='{{recipient}}';
+            let author_mes = data['message']['author'];
+            var div_class = ''
+            if(recipient != author_mes) div_class=' extra-align';
+
+          
             messageslist = document.getElementById('box')
             messageslist.insertAdjacentHTML(
                 'beforeend',
-                '<div class="card'+'{%if message.author == request.user%}'+'extra-align'+'{%endif%}'+'">\n'+
+                '<div class="card'+ div_class +' ">\n'+
                 '<div class="card-header">\n'+
                 '<p class="font-monospace text-muted">'+ data['message']['author'] + data['message']['created_at'] +'</p>\n'+
                 '</div>\n'+
@@ -118,7 +133,7 @@
             );
 
             let sc = document.getElementById('box');
-            sc.scrollTop=sc.scrollHeight;
+            sc.scrollTop=sc.scrollHeight; 
         };
 
 
@@ -133,6 +148,6 @@
         };
 
     </script>
-
+{%endblock javascript%}
 </body>
 </html>
